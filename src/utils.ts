@@ -182,7 +182,7 @@ export async function retryingFetch(
     const targetUrl = urls.length === index + 1 ? urls[0] : urls[index + 1]
     if (consoleOnFailover) {
       // tslint:disable-next-line: no-console
-      console.log(`Switched Hive RPC: ${targetUrl} (previous: ${currentAddress})`)
+      console.log(`Switched Steem RPC: ${targetUrl} (previous: ${currentAddress})`)
     }
     return targetUrl
   }

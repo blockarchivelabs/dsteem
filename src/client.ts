@@ -236,7 +236,7 @@ export class Client {
     public currentAddress: string
 
     /**
-     * @param address The address to the Hive RPC server,
+     * @param address The address to the Steem RPC server,
      * e.g. `https://api.steemit.com`. or [`https://api.upvu.org`, `https://another.api.com`]
      * @param options Client options.
      */
