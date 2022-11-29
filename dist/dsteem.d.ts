@@ -644,7 +644,10 @@ declare module 'dsteem/utils' {
 	/**
 	 * Fetch API wrapper that retries until timeout is reached.
 	 */
-	export function retryingFetch(url: string, opts: any, timeout: number, backoff: (tries: number) => number, fetchTimeout?: (tries: number) => number): Promise<any>;
+	export function retryingFetch(currentAddress: string, allAddresses: string | string[], opts: any, timeout: number, failoverThreshold: number, consoleOnFailover: boolean, backoff: (tries: number) => number, fetchTimeout?: (tries: number) => number): Promise<{
+	    response: any;
+	    currentAddress: string;
+	}>;
 	import { PublicKey } from 'dsteem/crypto';
 	import { Asset, PriceType } from 'dsteem/steem/asset';
 	import { WitnessSetPropertiesOperation } from 'dsteem/steem/operation';
@@ -2445,12 +2448,14 @@ declare module 'dsteem/client' {
 	 */
 	export interface ClientOptions {
 	    /**
-	     * Steem chain id. Defaults to main steem network:
-	     * `0000000000000000000000000000000000000000000000000000000000000000`
+	     * Hive chain id. Defaults to main hive network:
+	     * need the new id?
+	     * `beeab0de00000000000000000000000000000000000000000000000000000000`
+	     *
 	     */
 	    chainId?: string;
 	    /**
-	     * Steem address prefix. Defaults to main steem network:
+	     * Hive address prefix. Defaults to main network:
 	     * `STM`
 	     */
 	    addressPrefix?: string;
@@ -2463,6 +2468,17 @@ declare module 'dsteem/client' {
 	     */
 	    timeout?: number;
 	    /**
+	     * Specifies the amount of times the urls (RPC nodes) should be
+	     * iterated and retried in case of timeout errors.
+	     * (important) Requires url parameter to be an array (string[])!
+	     * Can be set to 0 to iterate and retry forever. Defaults to 3 rounds.
+	     */
+	    failoverThreshold?: number;
+	    /**
+	     * Whether a console.log should be made when RPC failed over to another one
+	     */
+	    consoleOnFailover?: boolean;
+	    /**
 	     * Retry backoff function, returns milliseconds. Default = {@link defaultBackoff}.
 	     */
 	    backoff?: (tries: number) => number;
@@ -2472,6 +2488,10 @@ declare module 'dsteem/client' {
 	     * @see https://nodejs.org/api/http.html#http_new_agent_options.
 	     */
 	    agent?: any;
+	    /**
+	     * Deprecated - don't use
+	     */
+	    rebrandedApi?: boolean;
 	}
 	/**
 	 * RPC Client
@@ -2490,7 +2510,7 @@ declare module 'dsteem/client' {
 	    /**
 	     * Address to Steem RPC server, *read-only*.
 	     */
-	    readonly address: string;
+	    readonly address: string | string[];
 	    /**
 	     * Database API helper.
 	     */
@@ -2517,11 +2537,15 @@ declare module 'dsteem/client' {
 	    readonly addressPrefix: string;
 	    private timeout;
 	    private backoff;
+	    private failoverThreshold;
+	    private consoleOnFailover;
+	    currentAddress: string;
 	    /**
-	     * @param address The address to the Steem RPC server, e.g. `https://api.steemit.com`.
+	     * @param address The address to the Hive RPC server,
+	     * e.g. `https://api.steemit.com`. or [`https://api.upvu.org`, `https://another.api.com`]
 	     * @param options Client options.
 	     */
-	    constructor(address: string, options?: ClientOptions);
+	    constructor(address: string | string[], options?: ClientOptions);
 	    /**
 	     * Make a RPC call to the server.
 	     *

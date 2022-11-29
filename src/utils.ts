@@ -37,6 +37,10 @@ import {EventEmitter} from 'events'
 import {PassThrough} from 'stream'
 import {VError} from 'verror'
 
+// TODO: Add more errors that should trigger a failover
+const timeoutErrors = ['timeout', 'ENOTFOUND', 'ECONNREFUSED', 'database lock', 'CERT_HAS_EXPIRED', 'EHOSTUNREACH']
+
+
 const fetch = global['fetch'] // tslint:disable-line:no-string-literal
 
 /**
@@ -88,29 +92,101 @@ export function copy<T>(object: T): T {
 /**
  * Fetch API wrapper that retries until timeout is reached.
  */
-export async function retryingFetch(url: string, opts: any, timeout: number,
-                                    backoff: (tries: number) => number,
-                                    fetchTimeout?: (tries: number) => number) {
-    const start = Date.now()
+export async function retryingFetch(
+    currentAddress: string,
+    allAddresses: string | string[],
+    opts: any,
+    timeout: number,
+    failoverThreshold: number,
+    consoleOnFailover: boolean,
+    backoff: (tries: number) => number,
+    fetchTimeout?: (tries: number) => number
+  ) {
+    let start = Date.now()
     let tries = 0
+    let round = 0
+  
     do {
-        try {
-            if (fetchTimeout) {
-                opts.timeout = fetchTimeout(tries)
-            }
-            const response = await fetch(url, opts)
-            if (!response.ok) {
-                throw new Error(`HTTP ${ response.status }: ${ response.statusText }`)
-            }
-            return await response.json()
-        } catch (error) {
-            if (timeout !== 0 && Date.now() - start > timeout) {
-                throw error
-            }
-            await sleep(backoff(tries++))
+      try {
+        if (fetchTimeout) {
+          opts.timeout = fetchTimeout(tries)
         }
+        const response = await fetch(currentAddress, opts)
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+        }
+        return { response: await response.json(), currentAddress }
+      } catch (error) {
+        if (timeout !== 0 && Date.now() - start > timeout) {
+          if ((!error || !error.code) && Array.isArray(allAddresses)) {
+            // If error is empty or not code is present, it means rpc is down => switch
+            currentAddress = failover(
+              currentAddress,
+              allAddresses,
+              currentAddress,
+              consoleOnFailover
+            )
+          } else {
+            const isFailoverError =
+              timeoutErrors.filter(
+                (fe) => error && error.code && error.code.includes(fe)
+              ).length > 0
+            if (
+              isFailoverError &&
+              Array.isArray(allAddresses) &&
+              allAddresses.length > 1
+            ) {
+              if (round < failoverThreshold) {
+                start = Date.now()
+                tries = -1
+                if (failoverThreshold > 0) {
+                  round++
+                }
+                currentAddress = failover(
+                  currentAddress,
+                  allAddresses,
+                  currentAddress,
+                  consoleOnFailover
+                )
+              } else {
+                error.message = `[${
+                  error.code
+                }] tried ${failoverThreshold} times with ${allAddresses.join(
+                  ','
+                )}`
+                throw error
+              }
+            } else {
+              // tslint:disable-next-line: no-console
+              console.error(
+                `Didn't failover for error ${error.code ? 'code' : 'message'}: [${
+                  error.code || error.message
+                }]`
+              )
+              throw error
+            }
+          }
+        }
+        await sleep(backoff(tries++))
+      }
     } while (true)
-}
+  }
+  
+  const failover = (
+    url: string,
+    urls: string[],
+    currentAddress: string,
+    consoleOnFailover: boolean
+  ) => {
+    const index = urls.indexOf(url)
+    const targetUrl = urls.length === index + 1 ? urls[0] : urls[index + 1]
+    if (consoleOnFailover) {
+      // tslint:disable-next-line: no-console
+      console.log(`Switched Hive RPC: ${targetUrl} (previous: ${currentAddress})`)
+    }
+    return targetUrl
+  }
+  
 
 // Hack to be able to generate a valid witness_set_properties op
 // Can hopefully be removed when steemd's JSON representation is fixed

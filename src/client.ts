@@ -39,7 +39,7 @@ import packageVersion from './version'
 
 import {Blockchain} from './helpers/blockchain'
 import {BroadcastAPI} from './helpers/broadcast'
-import {DatabaseAPI} from './helpers/database'
+import { DatabaseAPI } from './helpers/database'
 import {RCAPI} from './helpers/rc'
 import {copy, retryingFetch, waitForEvent} from './utils'
 
@@ -113,12 +113,14 @@ interface PendingRequest {
  */
 export interface ClientOptions {
     /**
-     * Steem chain id. Defaults to main steem network:
-     * `0000000000000000000000000000000000000000000000000000000000000000`
+     * Hive chain id. Defaults to main hive network:
+     * need the new id?
+     * `beeab0de00000000000000000000000000000000000000000000000000000000`
+     *
      */
     chainId?: string
     /**
-     * Steem address prefix. Defaults to main steem network:
+     * Hive address prefix. Defaults to main network:
      * `STM`
      */
     addressPrefix?: string
@@ -130,6 +132,20 @@ export interface ClientOptions {
      * Can be set to 0 to retry forever. Defaults to 60 * 1000 ms.
      */
     timeout?: number
+
+    /**
+     * Specifies the amount of times the urls (RPC nodes) should be
+     * iterated and retried in case of timeout errors.
+     * (important) Requires url parameter to be an array (string[])!
+     * Can be set to 0 to iterate and retry forever. Defaults to 3 rounds.
+     */
+    failoverThreshold?: number
+
+    /**
+     * Whether a console.log should be made when RPC failed over to another one
+     */
+    consoleOnFailover?: boolean
+
     /**
      * Retry backoff function, returns milliseconds. Default = {@link defaultBackoff}.
      */
@@ -140,7 +156,12 @@ export interface ClientOptions {
      * @see https://nodejs.org/api/http.html#http_new_agent_options.
      */
     agent?: any // https.Agent
+    /**
+     * Deprecated - don't use
+     */
+    rebrandedApi?: boolean
 }
+
 
 /**
  * RPC Client
@@ -172,7 +193,7 @@ export class Client {
     /**
      * Address to Steem RPC server, *read-only*.
      */
-    public readonly address: string
+    public readonly address: string | string[]
 
     /**
      * Database API helper.
@@ -194,6 +215,7 @@ export class Client {
      */
     public readonly blockchain: Blockchain
 
+    
     /**
      * Chain ID for current network.
      */
@@ -207,20 +229,37 @@ export class Client {
     private timeout: number
     private backoff: typeof defaultBackoff
 
+    private failoverThreshold: number
+
+    private consoleOnFailover: boolean
+
+    public currentAddress: string
+
     /**
-     * @param address The address to the Steem RPC server, e.g. `https://api.steemit.com`.
+     * @param address The address to the Hive RPC server,
+     * e.g. `https://api.steemit.com`. or [`https://api.upvu.org`, `https://another.api.com`]
      * @param options Client options.
      */
-    constructor(address: string, options: ClientOptions = {}) {
+
+    constructor(address: string | string[], options: ClientOptions = {}) {
+        if (options.rebrandedApi) {
+            // tslint:disable-next-line: no-console
+            console.log('Warning: rebrandedApi is deprecated and safely can be removed from client options')
+        }
+        this.currentAddress = Array.isArray(address) ? address[0] : address
         this.address = address
         this.options = options
 
-        this.chainId = options.chainId ? Buffer.from(options.chainId, 'hex') : DEFAULT_CHAIN_ID
+        this.chainId = options.chainId
+            ? Buffer.from(options.chainId, 'hex')
+            : DEFAULT_CHAIN_ID
         assert.equal(this.chainId.length, 32, 'invalid chain id')
         this.addressPrefix = options.addressPrefix || DEFAULT_ADDRESS_PREFIX
 
         this.timeout = options.timeout || 60 * 1000
         this.backoff = options.backoff || defaultBackoff
+        this.failoverThreshold = options.failoverThreshold || 3
+        this.consoleOnFailover = options.consoleOnFailover || false
 
         this.database = new DatabaseAPI(this)
         this.broadcast = new BroadcastAPI(this)
@@ -266,9 +305,21 @@ export class Client {
             // only effective in node.js (until timeout spec lands in browsers)
             fetchTimeout = (tries) => (tries + 1) * 500
         }
-        const response: RPCResponse = await retryingFetch(
-            this.address, opts, this.timeout, this.backoff, fetchTimeout
-        )
+        const { response, currentAddress }: { response: RPCResponse, currentAddress: string } =
+            await retryingFetch(
+                this.currentAddress,
+                this.address,
+                opts,
+                this.timeout,
+                this.failoverThreshold,
+                this.consoleOnFailover,
+                this.backoff,
+                fetchTimeout
+            )
+
+        // After failover, change the currently active address
+        if (currentAddress !== this.currentAddress) { this.currentAddress = currentAddress }
+
         // resolve FC error messages into something more readable
         if (response.error) {
             const formatValue = (value: any) => {
