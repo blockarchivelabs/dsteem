@@ -1,8 +1,8 @@
 {
-  "name": "dsteem",
-  "version": "0.11.3",
-  "description": "Steem blockchain RPC client library",
-  "author": "Johan Nordberg",
+  "name": "@upvu/dsteem",
+  "version": "1.0.1",
+  "description": "Steem blockchain RPC client library for UPVU Web",
+  "author": "source:Johan Nordberg modify:upvu",
   "license": "BSD-3-Clause",
   "main": "./lib/index-node",
   "typings": "./lib/index",
@@ -17,7 +17,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/jnordberg/dsteem"
+    "url": "https://github.com/blockarchivelabs/dsteem"
   },
   "scripts": {
     "test": "make ci-test",
