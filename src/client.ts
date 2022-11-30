@@ -75,7 +75,7 @@ interface RPCRequest {
 }
 
 interface RPCCall extends RPCRequest {
-    method: 'call'
+    method: 'call' | any
     /**
      * 1. API to call, you can pass either the numerical id of the API you get
      *    from calling 'get_api_by_name' or the name directly as a string.
@@ -276,7 +276,7 @@ export class Client {
      *
      */
     public async call(api: string, method: string, params: any = []): Promise<any> {
-	const request = {
+	const request: RPCCall = {
                 id: '1',
                 jsonrpc: '2.0',
                 method: `${api}.${method}`,
