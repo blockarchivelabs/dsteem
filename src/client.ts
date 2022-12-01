@@ -85,7 +85,6 @@ interface RPCCall extends RPCRequest {
    * 2. Method to call on that API.
    * 3. Arguments to pass to the method.
    */
-  params: any[];
 }
 
 interface RPCError {
@@ -289,6 +288,7 @@ export class Client {
       method: `${api}.${method}`,
       params: params,
     };
+    console.log("request info", request.method, request.params);
     const body = JSON.stringify(request, (key, value) => {
       // encode Buffers as hex strings instead of an array of bytes
       if (typeof value === "object" && value.type === "Buffer") {
