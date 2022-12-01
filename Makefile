@@ -32,7 +32,7 @@ dist/dsteem.js: src/index-browser.ts
 
 dist/dsteem.d.ts: $(SRC_FILES) node_modules
 	dts-generator --name dsteem --project . --out dist/dsteem.d.ts
-	sed -e "s@'dsteem/index'@'dsteem'@g" -i '' dist/dsteem.d.ts
+	perl -i -pe"s@'dsteem/index'@'dsteem'@g" dist/dsteem.d.ts
 
 dist/%.gz: dist/dsteem.js
 	gzip -9 -f -c $(basename $@) > $(basename $@).gz
@@ -49,7 +49,7 @@ test: node_modules
 
 .PHONY: ci-test
 ci-test: node_modules
-	tslint -p tsconfig.json -c tslint.json
+	eslint -c .eslintrc.json src/**/*.ts
 	nyc -r lcov -e .ts -i ts-node/register mocha --exit --reporter tap --require ts-node/register test/*.ts
 
 .PHONY: browser-test
@@ -70,8 +70,8 @@ node_modules:
 
 docs: $(SRC_FILES) node_modules
 	typedoc --gitRevision master --target ES6 --mode file --out docs src
-	find docs -name "*.html" | xargs sed -i '' 's~$(shell pwd)~.~g'
-	echo "Served at <https://jnordberg.github.io/dsteem/>" > docs/README.md
+	find docs -name "*.html" | xargs perl -i -pe's~$(shell pwd)~.~g'
+	echo "Served at <https://openhive-network.github.io/dsteem>" > docs/README.md
 	touch docs
 
 .PHONY: clean

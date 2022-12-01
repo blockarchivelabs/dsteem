@@ -1,1 +1,1 @@
-Served at <https://jnordberg.github.io/dsteem/>
+Served at <https://openhive-network.github.io/dsteem>
