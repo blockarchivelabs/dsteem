@@ -1,5 +1,5 @@
 /**
- * @file Hive operation type definitions.
+ * @file Steem operation type definitions.
  * @author Johan Nordberg <code@johan-nordberg.com>
  * @license
  * Copyright (c) 2017 Johan Nordberg. All Rights Reserved.
@@ -42,7 +42,6 @@ import { ChainProperties, HexBuffer } from "./misc";
 
 /**
  * Operation name.
- * Ref: https://gitlab.syncad.com/hive/hive/-/blob/master/libraries/protocol/include/hive/protocol/operations.hpp
  */
 export type OperationName = // <id>
 
@@ -120,8 +119,8 @@ export type VirtualOperationName = // <id>
     | "clear_null_account_balance" // last_regular + 16
     | "proposal_pay" // last_regular + 17
     | "sps_fund" // last_regular + 18
-    | "hardfork_hive" // last_regular + 19
-    | "hardfork_hive_restore" // last_regular + 20
+    | "hardfork_steem" // last_regular + 19
+    | "hardfork_steem_restore" // last_regular + 20
     | "delayed_voting" // last_regular + 21
     | "consolidate_treasury_balance" // last_regular + 22
     | "effective_comment_vote" // last_regular + 23
@@ -266,7 +265,7 @@ export interface ClaimRewardBalanceOperation extends Operation {
   0: "claim_reward_balance"; // 39
   1: {
     account: string; // account_name_type
-    reward_hive: string | Asset;
+    reward_steem: string | Asset;
     reward_sbd: string | Asset;
     reward_vests: string | Asset;
   };
@@ -302,10 +301,10 @@ export interface CommentOptionsOperation extends Operation {
   1: {
     author: string; // account_name_type
     permlink: string;
-    /** HBD value of the maximum payout this post will receive. */
+    /** SBD value of the maximum payout this post will receive. */
     max_accepted_payout: Asset | string;
-    /** The percent of Hive Dollars to key, unkept amounts will be received as Hive Power. */
-    percent_sbd: number; // uint16_t
+    /** The percent of Steem Dollars to key, unkept amounts will be received as Steem Power. */
+    percent_steem_dollars: number; // uint16_t
     /** Whether to allow post to receive votes. */
     allow_votes: boolean;
     /** Whether to allow post to recieve curation rewards. */
@@ -481,11 +480,11 @@ export interface EscrowReleaseOperation extends Operation {
     /**
      * The amount of hbd to release.
      */
-    hbd_amount: Asset | string;
+    sbd_amount: Asset | string;
     /**
-     * The amount of hive to release.
+     * The amount of steem to release.
      */
-    hive_amount: Asset | string;
+    steem_amount: Asset | string;
   };
 }
 
@@ -514,8 +513,8 @@ export interface EscrowTransferOperation extends Operation {
     to: string; // account_name_type
     agent: string; // account_name_type
     escrow_id: number; // uint32_t
-    hbd_amount: Asset | string;
-    hive_amount: Asset | string;
+    sbd_amount: Asset | string;
+    steem_amount: Asset | string;
     fee: Asset | string;
     ratification_deadline: string; // time_point_sec
     escrow_expiration: string; // time_point_sec
@@ -667,9 +666,9 @@ export interface RecoverAccountOperation extends Operation {
  *
  * Users not in the ACTIVE witness set should not have to worry about their
  * key getting compromised and being used to produced multiple blocks so
- * the attacker can report it and steel their vesting hive.
+ * the attacker can report it and steel their vesting steem.
  *
- * The result of the operation is to transfer the full VESTING HIVE balance
+ * The result of the operation is to transfer the full VESTING STEEM balance
  * of the block producer to the reporter.
  */
 export interface ReportOverProductionOperation extends Operation {
@@ -762,7 +761,7 @@ export interface SetResetAccountOperation extends Operation {
  * request for the funds to be transferred directly to another account's
  * balance rather than the withdrawing account. In addition, those funds
  * can be immediately vested again, circumventing the conversion from
- * vests to hive and back, guaranteeing they maintain their value.
+ * vests to steem and back, guaranteeing they maintain their value.
  */
 export interface SetWithdrawVestingRouteOperation extends Operation {
   0: "set_withdraw_vesting_route"; // 20
@@ -789,7 +788,7 @@ export interface TransferOperation extends Operation {
      */
     to: string; // account_name_type
     /**
-     * Amount of HIVE or HBD to send.
+     * Amount of STEEM or SBD to send.
      */
     amount: string | Asset;
     /**
@@ -822,7 +821,7 @@ export interface TransferToSavingsOperation extends Operation {
 }
 
 /**
- * This operation converts HIVE into VFS (Vesting Fund Shares) at
+ * This operation converts STEEM into VFS (Vesting Fund Shares) at
  * the current exchange rate. With this operation it is possible to
  * give another account vesting shares so that faucets can
  * pre-fund new accounts with vesting shares.
@@ -834,7 +833,7 @@ export interface TransferToVestingOperation extends Operation {
     from: string; // account_name_type
     to: string; // account_name_type
     /**
-     * Amount to power up, must be HIVE
+     * Amount to power up, must be STEEM
      */
     amount: string | Asset;
   };

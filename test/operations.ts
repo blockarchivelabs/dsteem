@@ -73,7 +73,7 @@ describe("operations", function () {
     assert.deepEqual(JSON.parse(tx.operations[0][1].json), data);
   });
 
-  it("should transfer hive", async function () {
+  it("should transfer steem", async function () {
     const [acc2bf] = await client.database.getAccounts([acc2.username]);
     await client.broadcast.transfer(
       {
@@ -149,7 +149,7 @@ describe("operations", function () {
         author: username,
         allow_votes: true,
         allow_curation_rewards: true,
-        percent_sbd: 0,
+        percent_steem_dollars: 0,
         max_accepted_payout: Asset.from(10, "TBD"),
         extensions: [
           [0, { beneficiaries: [{ weight: 10000, account: acc1.username }] }],

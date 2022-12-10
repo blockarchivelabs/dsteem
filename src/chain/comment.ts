@@ -1,5 +1,5 @@
 /**
- * @file Hive type definitions related to comments and posting.
+ * @file Steem type definitions related to comments and posting.
  * @author Johan Nordberg <code@johan-nordberg.com>
  * @license
  * Copyright (c) 2017 Johan Nordberg. All Rights Reserved.
@@ -65,7 +65,7 @@ export interface Comment {
   net_votes: number; // int32_t
   root_comment: number; // comment_id_type
   max_accepted_payout: string; // asset
-  percent_sbd: number; // uint16_t
+  percent_steem_dollars: number; // uint16_t
   allow_replies: boolean;
   allow_votes: boolean;
   allow_curation_rewards: boolean;

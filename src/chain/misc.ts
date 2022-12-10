@@ -1,5 +1,5 @@
 /**
- * @file Misc hive type definitions.
+ * @file Misc steem type definitions.
  * @author Johan Nordberg <code@johan-nordberg.com>
  * @license
  * Copyright (c) 2017 Johan Nordberg. All Rights Reserved.
@@ -75,12 +75,12 @@ export class HexBuffer {
  */
 export interface ChainProperties {
   /**
-   * This fee, paid in HIVE, is converted into VESTING SHARES for the new account. Accounts
+   * This fee, paid in STEEM, is converted into VESTING SHARES for the new account. Accounts
    * without vesting shares cannot earn usage rations and therefore are powerless. This minimum
    * fee requires all accounts to have some kind of commitment to the network that includes the
    * ability to vote and make transactions.
    *
-   * @note This has to be multiplied by STEEMIT ? `CREATE_ACCOUNT_WITH_HIVE_MODIFIER`
+   * @note This has to be multiplied by STEEMIT ? `CREATE_ACCOUNT_WITH_steem_MODIFIER`
    *       (defined as 30 on the main chain) to get the minimum fee needed to create an account.
    *
    */
@@ -91,9 +91,9 @@ export interface ChainProperties {
    */
   maximum_block_size: number; // uint32_t
   /**
-   * The HBD interest percentage rate decided by witnesses, expressed 0 to 10000.
+   * The SBD interest percentage rate decided by witnesses, expressed 0 to 10000.
    */
-  hbd_interest_rate: number; // uint16_t
+  sbd_interest_rate: number; // uint16_t
 }
 
 export interface VestingDelegation {
@@ -158,20 +158,20 @@ export interface DynamicGlobalProperties {
    * Total asset held in confidential balances.
    */
   confidential_sbd_supply: Asset | string;
-  total_vesting_fund_hive: Asset | string;
+  total_vesting_fund_steem: Asset | string;
   total_vesting_shares: Asset | string;
-  total_reward_fund_hive: Asset | string;
+  total_reward_fund_steem: Asset | string;
   /**
    * The running total of REWARD^2.
    */
   total_reward_shares2: string;
   pending_rewarded_vesting_shares: Asset | string;
-  pending_rewarded_vesting_hive: Asset | string;
+  pending_rewarded_vesting_steem: Asset | string;
   /**
-   * This property defines the interest rate that HBD deposits receive.
+   * This property defines the interest rate that SBD deposits receive.
    */
-  hbd_interest_rate: number;
-  hbd_print_rate: number;
+  sbd_interest_rate: number;
+  sbd_print_rate: number;
   /**
    *  Average block size is updated every block to be:
    *
@@ -232,10 +232,10 @@ export interface DynamicGlobalProperties {
  */
 export function getVestingSharePrice(props: DynamicGlobalProperties): Price {
   // empty string is needed to skip the type check error
-  const totalVestingFund = Asset.from(props.total_vesting_fund_hive);
+  const totalVestingFund = Asset.from(props.total_vesting_fund_steem);
   const totalVestingShares = Asset.from(props.total_vesting_shares);
   if (totalVestingFund.amount === 0 || totalVestingShares.amount === 0) {
-    return new Price(new Asset(1, "VESTS"), new Asset(1, "HIVE"));
+    return new Price(new Asset(1, "VESTS"), new Asset(1, "STEEM"));
   }
   return new Price(totalVestingShares, totalVestingFund);
 }

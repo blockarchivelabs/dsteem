@@ -1,5 +1,5 @@
 /**
- * @file Hive protocol serialization.
+ * @file Steem protocol serialization.
  * @author Johan Nordberg <code@johan-nordberg.com>
  * @license
  * Copyright (c) 2017 Johan Nordberg. All Rights Reserved.
@@ -218,7 +218,7 @@ const SignedBlockHeaderSerializer = ObjectSerializer([
 const ChainPropertiesSerializer = ObjectSerializer([
   ["account_creation_fee", AssetSerializer],
   ["maximum_block_size", UInt32Serializer],
-  ["hbd_interest_rate", UInt16Serializer],
+  ["sbd_interest_rate", UInt16Serializer],
 ]);
 
 const OperationDataSerializer = (
@@ -302,8 +302,8 @@ OperationSerializers.claim_account = OperationDataSerializer(22, [
 
 OperationSerializers.claim_reward_balance = OperationDataSerializer(39, [
   ["account", StringSerializer],
-  ["reward_hive", AssetSerializer],
-  ["reward_sbd", AssetSerializer],
+  ["reward_steem", AssetSerializer],
+  ["reward_hbd", AssetSerializer],
   ["reward_vests", AssetSerializer],
 ]);
 
@@ -321,7 +321,7 @@ OperationSerializers.comment_options = OperationDataSerializer(19, [
   ["author", StringSerializer],
   ["permlink", StringSerializer],
   ["max_accepted_payout", AssetSerializer],
-  ["percent_sbd", UInt16Serializer],
+  ["percent_steem_dollars", UInt16Serializer],
   ["allow_votes", BooleanSerializer],
   ["allow_curation_rewards", BooleanSerializer],
   [
@@ -415,15 +415,15 @@ OperationSerializers.escrow_release = OperationDataSerializer(29, [
   ["who", StringSerializer],
   ["receiver", StringSerializer],
   ["escrow_id", UInt32Serializer],
-  ["hbd_amount", AssetSerializer],
-  ["hive_amount", AssetSerializer],
+  ["sbd_amount", AssetSerializer],
+  ["steem_amount", AssetSerializer],
 ]);
 
 OperationSerializers.escrow_transfer = OperationDataSerializer(27, [
   ["from", StringSerializer],
   ["to", StringSerializer],
-  ["hbd_amount", AssetSerializer],
-  ["hive_amount", AssetSerializer],
+  ["sbd_amount", AssetSerializer],
+  ["steem_amount", AssetSerializer],
   ["escrow_id", UInt32Serializer],
   ["agent", StringSerializer],
   ["fee", AssetSerializer],

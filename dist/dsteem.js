@@ -52,7 +52,7 @@
         function (_dereq_, module, exports) {
           "use strict";
           Object.defineProperty(exports, "__esModule", { value: !0 }),
-            (exports.default = "1.1.0");
+            (exports.default = "1.1.2");
         },
         {},
       ],
@@ -38101,8 +38101,8 @@
                         switch (this.symbol) {
                           case "TESTS":
                           case "TBD":
-                          case "HIVE":
-                          case "HBD":
+                          case "STEEM":
+                          case "SBD":
                           case "SBD":
                           case "STEEM":
                             return 3;
@@ -38115,9 +38115,9 @@
                       key: "steem_symbols",
                       value: function () {
                         switch (this.symbol) {
-                          case "HIVE":
+                          case "STEEM":
                             return Asset.from(this.amount, "STEEM");
-                          case "HBD":
+                          case "SBD":
                             return Asset.from(this.amount, "SBD");
                           default:
                             return this;
@@ -38263,9 +38263,9 @@
                           symbol = _string$split2[1];
                         if (
                           ![
-                            "HIVE",
+                            "STEEM",
                             "VESTS",
-                            "HBD",
+                            "SBD",
                             "TESTS",
                             "TBD",
                             "SBD",
@@ -38481,7 +38481,7 @@
             (exports.HexBuffer = HexBuffer),
               (exports.getVestingSharePrice = function (props) {
                 var totalVestingFund = asset_1.Asset.from(
-                    props.total_vesting_fund_hive
+                    props.total_vesting_fund_steem
                   ),
                   totalVestingShares = asset_1.Asset.from(
                     props.total_vesting_shares
@@ -38490,7 +38490,7 @@
                   0 === totalVestingShares.amount
                   ? new asset_1.Price(
                       new asset_1.Asset(1, "VESTS"),
-                      new asset_1.Asset(1, "HIVE")
+                      new asset_1.Asset(1, "STEEM")
                     )
                   : new asset_1.Price(totalVestingShares, totalVestingFund);
               }),
@@ -38838,7 +38838,7 @@
                 ChainPropertiesSerializer = ObjectSerializer([
                   ["account_creation_fee", AssetSerializer],
                   ["maximum_block_size", UInt32Serializer],
-                  ["hbd_interest_rate", UInt16Serializer],
+                  ["sbd_interest_rate", UInt16Serializer],
                 ]),
                 OperationSerializers = {};
               (OperationSerializers.account_create = OperationDataSerializer(
@@ -38911,8 +38911,8 @@
                 (OperationSerializers.claim_reward_balance =
                   OperationDataSerializer(39, [
                     ["account", StringSerializer],
-                    ["reward_hive", AssetSerializer],
-                    ["reward_sbd", AssetSerializer],
+                    ["reward_steem", AssetSerializer],
+                    ["reward_hbd", AssetSerializer],
                     ["reward_vests", AssetSerializer],
                   ])),
                 (OperationSerializers.comment = OperationDataSerializer(1, [
@@ -38930,7 +38930,7 @@
                     ["author", StringSerializer],
                     ["permlink", StringSerializer],
                     ["max_accepted_payout", AssetSerializer],
-                    ["percent_sbd", UInt16Serializer],
+                    ["percent_steem_dollars", UInt16Serializer],
                     ["allow_votes", BooleanSerializer],
                     ["allow_curation_rewards", BooleanSerializer],
                     [
@@ -39046,8 +39046,8 @@
                     ["who", StringSerializer],
                     ["receiver", StringSerializer],
                     ["escrow_id", UInt32Serializer],
-                    ["hbd_amount", AssetSerializer],
-                    ["hive_amount", AssetSerializer],
+                    ["sbd_amount", AssetSerializer],
+                    ["steem_amount", AssetSerializer],
                   ]
                 )),
                 (OperationSerializers.escrow_transfer = OperationDataSerializer(
@@ -39055,8 +39055,8 @@
                   [
                     ["from", StringSerializer],
                     ["to", StringSerializer],
-                    ["hbd_amount", AssetSerializer],
-                    ["hive_amount", AssetSerializer],
+                    ["sbd_amount", AssetSerializer],
+                    ["steem_amount", AssetSerializer],
                     ["escrow_id", UInt32Serializer],
                     ["agent", StringSerializer],
                     ["fee", AssetSerializer],
@@ -43034,13 +43034,13 @@
                 case "maximum_block_size":
                   type = serializer_1.Types.UInt32;
                   break;
-                case "hbd_interest_rate":
+                case "sbd_interest_rate":
                   type = serializer_1.Types.UInt16;
                   break;
                 case "url":
                   type = serializer_1.Types.String;
                   break;
-                case "hbd_exchange_rate":
+                case "sbd_exchange_rate":
                   type = serializer_1.Types.Price;
                   break;
                 case "account_creation_fee":
@@ -43128,8 +43128,8 @@
             clear_null_account_balance: 65,
             proposal_pay: 66,
             sps_fund: 67,
-            hardfork_hive: 68,
-            hardfork_hive_restore: 69,
+            hardfork_steem: 68,
+            hardfork_steem_restore: 69,
             delayed_voting: 70,
             consolidate_treasury_balance: 71,
             effective_comment_vote: 72,

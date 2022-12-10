@@ -33,12 +33,19 @@
  * in the design, construction, operation or maintenance of any military facility.
  */
 
-import fetch from 'cross-fetch'
-import { EventEmitter } from 'events'
-import { PassThrough } from 'stream'
+import fetch from "cross-fetch";
+import { EventEmitter } from "events";
+import { PassThrough } from "stream";
 
 // TODO: Add more errors that should trigger a failover
-const timeoutErrors = ['timeout', 'ENOTFOUND', 'ECONNREFUSED', 'database lock', 'CERT_HAS_EXPIRED', 'EHOSTUNREACH']
+const timeoutErrors = [
+  "timeout",
+  "ENOTFOUND",
+  "ECONNREFUSED",
+  "database lock",
+  "CERT_HAS_EXPIRED",
+  "EHOSTUNREACH",
+];
 
 /**
  * Return a promise that will resove when a specific event is emitted.
@@ -48,8 +55,8 @@ export function waitForEvent<T>(
   eventName: string | symbol
 ): Promise<T> {
   return new Promise((resolve, reject) => {
-    emitter.once(eventName, resolve)
-  })
+    emitter.once(eventName, resolve);
+  });
 }
 
 /**
@@ -57,8 +64,8 @@ export function waitForEvent<T>(
  */
 export function sleep(ms: number): Promise<void> {
   return new Promise<void>((resolve) => {
-    setTimeout(resolve, ms)
-  })
+    setTimeout(resolve, ms);
+  });
 }
 
 /**
@@ -67,30 +74,30 @@ export function sleep(ms: number): Promise<void> {
 export function iteratorStream<T>(
   iterator: AsyncIterableIterator<T>
 ): NodeJS.ReadableStream {
-  const stream = new PassThrough({ objectMode: true })
+  const stream = new PassThrough({ objectMode: true });
   const iterate = async () => {
     for await (const item of iterator) {
       if (!stream.write(item)) {
-        await waitForEvent(stream, 'drain')
+        await waitForEvent(stream, "drain");
       }
     }
-  }
+  };
   iterate()
     .then(() => {
-      stream.end()
+      stream.end();
     })
     .catch((error) => {
-      stream.emit('error', error)
-      stream.end()
-    })
-  return stream
+      stream.emit("error", error);
+      stream.end();
+    });
+  return stream;
 }
 
 /**
  * Return a deep copy of a JSON-serializable object.
  */
 export function copy<T>(object: T): T {
-  return JSON.parse(JSON.stringify(object))
+  return JSON.parse(JSON.stringify(object));
 }
 
 /**
@@ -106,20 +113,20 @@ export async function retryingFetch(
   backoff: (tries: number) => number,
   fetchTimeout?: (tries: number) => number
 ) {
-  let start = Date.now()
-  let tries = 0
-  let round = 0
+  let start = Date.now();
+  let tries = 0;
+  let round = 0;
 
   do {
     try {
       if (fetchTimeout) {
-        opts.timeout = fetchTimeout(tries)
+        opts.timeout = fetchTimeout(tries);
       }
-      const response = await fetch(currentAddress, opts)
+      const response = await fetch(currentAddress, opts);
       if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
-      return { response: await response.json(), currentAddress }
+      return { response: await response.json(), currentAddress };
     } catch (error) {
       if (timeout !== 0 && Date.now() - start > timeout) {
         if ((!error || !error.code) && Array.isArray(allAddresses)) {
@@ -129,51 +136,51 @@ export async function retryingFetch(
             allAddresses,
             currentAddress,
             consoleOnFailover
-          )
+          );
         } else {
           const isFailoverError =
             timeoutErrors.filter(
               (fe) => error && error.code && error.code.includes(fe)
-            ).length > 0
+            ).length > 0;
           if (
             isFailoverError &&
             Array.isArray(allAddresses) &&
             allAddresses.length > 1
           ) {
             if (round < failoverThreshold) {
-              start = Date.now()
-              tries = -1
+              start = Date.now();
+              tries = -1;
               if (failoverThreshold > 0) {
-                round++
+                round++;
               }
               currentAddress = failover(
                 currentAddress,
                 allAddresses,
                 currentAddress,
                 consoleOnFailover
-              )
+              );
             } else {
               error.message = `[${
                 error.code
               }] tried ${failoverThreshold} times with ${allAddresses.join(
-                ','
-              )}`
-              throw error
+                ","
+              )}`;
+              throw error;
             }
           } else {
             // tslint:disable-next-line: no-console
             console.error(
-              `Didn't failover for error ${error.code ? 'code' : 'message'}: [${
+              `Didn't failover for error ${error.code ? "code" : "message"}: [${
                 error.code || error.message
               }]`
-            )
-            throw error
+            );
+            throw error;
           }
         }
       }
-      await sleep(backoff(tries++))
+      await sleep(backoff(tries++));
     }
-  } while (true)
+  } while (true);
 }
 
 const failover = (
@@ -182,42 +189,44 @@ const failover = (
   currentAddress: string,
   consoleOnFailover: boolean
 ) => {
-  const index = urls.indexOf(url)
-  const targetUrl = urls.length === index + 1 ? urls[0] : urls[index + 1]
+  const index = urls.indexOf(url);
+  const targetUrl = urls.length === index + 1 ? urls[0] : urls[index + 1];
   if (consoleOnFailover) {
     // tslint:disable-next-line: no-console
-    console.log(`Switched Hive RPC: ${targetUrl} (previous: ${currentAddress})`)
+    console.log(
+      `Switched Steem RPC: ${targetUrl} (previous: ${currentAddress})`
+    );
   }
-  return targetUrl
-}
+  return targetUrl;
+};
 
 // Hack to be able to generate a valid witness_set_properties op
 // Can hopefully be removed when hived's JSON representation is fixed
-import * as ByteBuffer from 'bytebuffer'
-import { Asset, PriceType } from './chain/asset'
-import { WitnessSetPropertiesOperation } from './chain/operation'
-import { Serializer, Types } from './chain/serializer'
-import { PublicKey } from './crypto'
+import * as ByteBuffer from "bytebuffer";
+import { Asset, PriceType } from "./chain/asset";
+import { WitnessSetPropertiesOperation } from "./chain/operation";
+import { Serializer, Types } from "./chain/serializer";
+import { PublicKey } from "./crypto";
 export interface WitnessProps {
-  account_creation_fee?: string | Asset
-  account_subsidy_budget?: number // uint32_t
-  account_subsidy_decay?: number // uint32_t
-  key: PublicKey | string
-  maximum_block_size?: number // uint32_t
-  new_signing_key?: PublicKey | string | null
-  hbd_exchange_rate?: PriceType
-  hbd_interest_rate?: number // uint16_t
-  url?: string
+  account_creation_fee?: string | Asset;
+  account_subsidy_budget?: number; // uint32_t
+  account_subsidy_decay?: number; // uint32_t
+  key: PublicKey | string;
+  maximum_block_size?: number; // uint32_t
+  new_signing_key?: PublicKey | string | null;
+  sbd_exchange_rate?: PriceType;
+  sbd_interest_rate?: number; // uint16_t
+  url?: string;
 }
 function serialize(serializer: Serializer, data: any) {
   const buffer = new ByteBuffer(
     ByteBuffer.DEFAULT_CAPACITY,
     ByteBuffer.LITTLE_ENDIAN
-  )
-  serializer(buffer, data)
-  buffer.flip()
+  );
+  serializer(buffer, data);
+  buffer.flip();
   // `props` values must be hex
-  return buffer.toString('hex')
+  return buffer.toString("hex");
   // return Buffer.from(buffer.toBuffer());
 }
 export function buildWitnessUpdateOp(
@@ -227,42 +236,42 @@ export function buildWitnessUpdateOp(
   const data: WitnessSetPropertiesOperation[1] = {
     extensions: [],
     owner,
-    props: []
-  }
+    props: [],
+  };
   for (const key of Object.keys(props)) {
-    let type: Serializer
+    let type: Serializer;
     switch (key) {
-      case 'key':
-      case 'new_signing_key':
-        type = Types.PublicKey
-        break
-      case 'account_subsidy_budget':
-      case 'account_subsidy_decay':
-      case 'maximum_block_size':
-        type = Types.UInt32
-        break
-      case 'hbd_interest_rate':
-        type = Types.UInt16
-        break
-      case 'url':
-        type = Types.String
-        break
-      case 'hbd_exchange_rate':
-        type = Types.Price
-        break
-      case 'account_creation_fee':
-        type = Types.Asset
-        break
+      case "key":
+      case "new_signing_key":
+        type = Types.PublicKey;
+        break;
+      case "account_subsidy_budget":
+      case "account_subsidy_decay":
+      case "maximum_block_size":
+        type = Types.UInt32;
+        break;
+      case "sbd_interest_rate":
+        type = Types.UInt16;
+        break;
+      case "url":
+        type = Types.String;
+        break;
+      case "sbd_exchange_rate":
+        type = Types.Price;
+        break;
+      case "account_creation_fee":
+        type = Types.Asset;
+        break;
       default:
-        throw new Error(`Unknown witness prop: ${key}`)
+        throw new Error(`Unknown witness prop: ${key}`);
     }
-    data.props.push([key, serialize(type, props[key])])
+    data.props.push([key, serialize(type, props[key])]);
   }
-  data.props.sort((a, b) => a[0].localeCompare(b[0]))
-  return ['witness_set_properties', data]
+  data.props.sort((a, b) => a[0].localeCompare(b[0]));
+  return ["witness_set_properties", data];
 }
 
-const JSBI = require('jsbi')
+const JSBI = require("jsbi");
 export const operationOrders = {
   vote: 0,
   // tslint:disable-next-line: object-literal-sort-keys
@@ -334,8 +343,8 @@ export const operationOrders = {
   clear_null_account_balance: 65,
   proposal_pay: 66,
   sps_fund: 67,
-  hardfork_hive: 68,
-  hardfork_hive_restore: 69,
+  hardfork_steem: 68,
+  hardfork_steem_restore: 69,
   delayed_voting: 70,
   consolidate_treasury_balance: 71,
   effective_comment_vote: 72,
@@ -350,8 +359,8 @@ export const operationOrders = {
   fill_collateralized_convert_request: 81,
   system_warning: 82,
   fill_recurrent_transfer: 83,
-  failed_recurrent_transfer: 84
-}
+  failed_recurrent_transfer: 84,
+};
 
 /**
  * Make bitmask filter to be used with getAccountHistory call
@@ -362,7 +371,7 @@ export function makeBitMaskFilter(allowedOperations: number[]) {
     .reduce(redFunction, [JSBI.BigInt(0), JSBI.BigInt(0)])
     .map((value) =>
       JSBI.notEqual(value, JSBI.BigInt(0)) ? value.toString() : null
-    )
+    );
 }
 
 const redFunction = ([low, high], allowedOperation) => {
@@ -372,15 +381,15 @@ const redFunction = ([low, high], allowedOperation) => {
         low,
         JSBI.leftShift(JSBI.BigInt(1), JSBI.BigInt(allowedOperation))
       ),
-      high
-    ]
+      high,
+    ];
   } else {
     return [
       low,
       JSBI.bitwiseOr(
         high,
         JSBI.leftShift(JSBI.BigInt(1), JSBI.BigInt(allowedOperation - 64))
-      )
-    ]
+      ),
+    ];
   }
-}
+};
