@@ -234,16 +234,16 @@ declare module 'dsteem/chain/account' {
 	    };
 	    balance: string | Asset;
 	    savings_balance: string | Asset;
-	    hbd_balance: string | Asset;
-	    hbd_seconds: string;
-	    hbd_seconds_last_update: string;
-	    hbd_last_interest_payment: string;
-	    savings_hbd_balance: string | Asset;
-	    savings_hbd_seconds: string;
-	    savings_hbd_seconds_last_update: string;
-	    savings_hbd_last_interest_payment: string;
+	    sbd_balance: string | Asset;
+	    sbd_seconds: string;
+	    sbd_seconds_last_update: string;
+	    sbd_last_interest_payment: string;
+	    savings_sbd_balance: string | Asset;
+	    savings_sbd_seconds: string;
+	    savings_sbd_seconds_last_update: string;
+	    savings_sbd_last_interest_payment: string;
 	    savings_withdraw_requests: number;
-	    reward_hbd_balance: string | Asset;
+	    reward_sbd_balance: string | Asset;
 	    reward_hive_balance: string | Asset;
 	    reward_vesting_balance: string | Asset;
 	    reward_vesting_hive: string | Asset;
@@ -375,7 +375,7 @@ declare module 'dsteem/chain/misc' {
 	    /**
 	     * The HBD interest percentage rate decided by witnesses, expressed 0 to 10000.
 	     */
-	    hbd_interest_rate: number;
+	    sbd_interest_rate: number;
 	}
 	export interface VestingDelegation {
 	    /**
@@ -433,11 +433,11 @@ declare module 'dsteem/chain/misc' {
 	     * Total asset held in confidential balances.
 	     */
 	    confidential_supply: Asset | string;
-	    current_hbd_supply: Asset | string;
+	    current_sbd_supply: Asset | string;
 	    /**
 	     * Total asset held in confidential balances.
 	     */
-	    confidential_hbd_supply: Asset | string;
+	    confidential_sbd_supply: Asset | string;
 	    total_vesting_fund_hive: Asset | string;
 	    total_vesting_shares: Asset | string;
 	    total_reward_fund_hive: Asset | string;
@@ -450,8 +450,8 @@ declare module 'dsteem/chain/misc' {
 	    /**
 	     * This property defines the interest rate that HBD deposits receive.
 	     */
-	    hbd_interest_rate: number;
-	    hbd_print_rate: number;
+	    sbd_interest_rate: number;
+	    sbd_print_rate: number;
 	    /**
 	     *  Average block size is updated every block to be:
 	     *
@@ -928,7 +928,7 @@ declare module 'dsteem/chain/comment' {
 	    net_votes: number;
 	    root_comment: number;
 	    max_accepted_payout: string;
-	    percent_hbd: number;
+	    percent_sbd: number;
 	    allow_replies: boolean;
 	    allow_votes: boolean;
 	    allow_curation_rewards: boolean;
@@ -1130,7 +1130,7 @@ declare module 'dsteem/chain/operation' {
 	    1: {
 	        account: string;
 	        reward_hive: string | Asset;
-	        reward_hbd: string | Asset;
+	        reward_sbd: string | Asset;
 	        reward_vests: string | Asset;
 	    };
 	}
@@ -1165,7 +1165,7 @@ declare module 'dsteem/chain/operation' {
 	        /** HBD value of the maximum payout this post will receive. */
 	        max_accepted_payout: Asset | string;
 	        /** The percent of Hive Dollars to key, unkept amounts will be received as Hive Power. */
-	        percent_hbd: number;
+	        percent_sbd: number;
 	        /** Whether to allow post to receive votes. */
 	        allow_votes: boolean;
 	        /** Whether to allow post to recieve curation rewards. */
@@ -1332,7 +1332,7 @@ declare module 'dsteem/chain/operation' {
 	        /**
 	         * The amount of hbd to release.
 	         */
-	        hbd_amount: Asset | string;
+	        sbd_amount: Asset | string;
 	        /**
 	         * The amount of hive to release.
 	         */
@@ -1364,7 +1364,7 @@ declare module 'dsteem/chain/operation' {
 	        to: string;
 	        agent: string;
 	        escrow_id: number;
-	        hbd_amount: Asset | string;
+	        sbd_amount: Asset | string;
 	        hive_amount: Asset | string;
 	        fee: Asset | string;
 	        ratification_deadline: string;
@@ -1891,8 +1891,8 @@ declare module 'dsteem/utils' {
 	    key: PublicKey | string;
 	    maximum_block_size?: number;
 	    new_signing_key?: PublicKey | string | null;
-	    hbd_exchange_rate?: PriceType;
-	    hbd_interest_rate?: number;
+	    sbd_exchange_rate?: PriceType;
+	    sbd_interest_rate?: number;
 	    url?: string;
 	}
 	export function buildWitnessUpdateOp(owner: string, props: WitnessProps): WitnessSetPropertiesOperation;
