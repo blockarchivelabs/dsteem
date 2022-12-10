@@ -5,7 +5,7 @@ declare module 'dsteem/version' {
 }
 declare module 'dsteem/chain/asset' {
 	/**
-	 * @file Hive asset type definitions and helpers.
+	 * @file Steem asset type definitions and helpers.
 	 * @author Johan Nordberg <code@johan-nordberg.com>
 	 * @license
 	 * Copyright (c) 2017 Johan Nordberg. All Rights Reserved.
@@ -46,16 +46,16 @@ declare module 'dsteem/chain/asset' {
 	/**
 	 * Asset symbol string.
 	 */
-	export type AssetSymbol = 'HIVE' | 'VESTS' | 'HBD' | 'TESTS' | 'TBD' | 'STEEM' | 'SBD';
+	export type AssetSymbol = "STEEM" | "VESTS" | "SBD" | "TESTS" | "TBD" | "STEEM" | "SBD";
 	/**
-	 * Class representing a hive asset, e.g. `1.000 HIVE` or `12.112233 VESTS`.
+	 * Class representing a steem asset, e.g. `1.000 STEEM` or `12.112233 VESTS`.
 	 */
 	export class Asset {
 	    readonly amount: number;
 	    readonly symbol: AssetSymbol;
 	    constructor(amount: number, symbol: AssetSymbol);
 	    /**
-	     * Create a new Asset instance from a string, e.g. `42.000 HIVE`.
+	     * Create a new Asset instance from a string, e.g. `42.000 STEEM`.
 	     */
 	    static fromString(string: string, expectedSymbol?: AssetSymbol): Asset;
 	    /**
@@ -82,7 +82,7 @@ declare module 'dsteem/chain/asset' {
 	     */
 	    steem_symbols(): Asset;
 	    /**
-	     * Return a string representation of this asset, e.g. `42.000 HIVE`.
+	     * Return a string representation of this asset, e.g. `42.000 STEEM`.
 	     */
 	    toString(): string;
 	    /**
@@ -151,7 +151,7 @@ declare module 'dsteem/chain/asset' {
 }
 declare module 'dsteem/chain/account' {
 	/**
-	 * @file Hive account type definitions.
+	 * @file Steem account type definitions.
 	 * @author Johan Nordberg <code@johan-nordberg.com>
 	 * @license
 	 * Copyright (c) 2017 Johan Nordberg. All Rights Reserved.
@@ -234,19 +234,19 @@ declare module 'dsteem/chain/account' {
 	    };
 	    balance: string | Asset;
 	    savings_balance: string | Asset;
-	    hbd_balance: string | Asset;
-	    hbd_seconds: string;
-	    hbd_seconds_last_update: string;
-	    hbd_last_interest_payment: string;
-	    savings_hbd_balance: string | Asset;
-	    savings_hbd_seconds: string;
-	    savings_hbd_seconds_last_update: string;
-	    savings_hbd_last_interest_payment: string;
+	    sbd_balance: string | Asset;
+	    sbd_seconds: string;
+	    sbd_seconds_last_update: string;
+	    sbd_last_interest_payment: string;
+	    savings_sbd_balance: string | Asset;
+	    savings_sbd_seconds: string;
+	    savings_sbd_seconds_last_update: string;
+	    savings_sbd_last_interest_payment: string;
 	    savings_withdraw_requests: number;
-	    reward_hbd_balance: string | Asset;
-	    reward_hive_balance: string | Asset;
+	    reward_sbd_balance: string | Asset;
+	    reward_steem_balance: string | Asset;
 	    reward_vesting_balance: string | Asset;
-	    reward_vesting_hive: string | Asset;
+	    reward_vesting_steem: string | Asset;
 	    curation_rewards: number | string;
 	    posting_rewards: number | string;
 	    vesting_shares: string | Asset;
@@ -270,7 +270,7 @@ declare module 'dsteem/chain/account' {
 	}
 	export interface ExtendedAccount extends Account {
 	    /**
-	     * Convert vesting_shares to vesting hive.
+	     * Convert vesting_shares to vesting steem.
 	     */
 	    vesting_balance: string | Asset;
 	    reputation: string | number;
@@ -300,7 +300,7 @@ declare module 'dsteem/chain/account' {
 declare module 'dsteem/chain/misc' {
 	/// <reference types="node" />
 	/**
-	 * @file Misc hive type definitions.
+	 * @file Misc steem type definitions.
 	 * @author Johan Nordberg <code@johan-nordberg.com>
 	 * @license
 	 * Copyright (c) 2017 Johan Nordberg. All Rights Reserved.
@@ -357,12 +357,12 @@ declare module 'dsteem/chain/misc' {
 	 */
 	export interface ChainProperties {
 	    /**
-	     * This fee, paid in HIVE, is converted into VESTING SHARES for the new account. Accounts
+	     * This fee, paid in STEEM, is converted into VESTING SHARES for the new account. Accounts
 	     * without vesting shares cannot earn usage rations and therefore are powerless. This minimum
 	     * fee requires all accounts to have some kind of commitment to the network that includes the
 	     * ability to vote and make transactions.
 	     *
-	     * @note This has to be multiplied by STEEMIT ? `CREATE_ACCOUNT_WITH_HIVE_MODIFIER`
+	     * @note This has to be multiplied by STEEMIT ? `CREATE_ACCOUNT_WITH_steem_MODIFIER`
 	     *       (defined as 30 on the main chain) to get the minimum fee needed to create an account.
 	     *
 	     */
@@ -373,9 +373,9 @@ declare module 'dsteem/chain/misc' {
 	     */
 	    maximum_block_size: number;
 	    /**
-	     * The HBD interest percentage rate decided by witnesses, expressed 0 to 10000.
+	     * The SBD interest percentage rate decided by witnesses, expressed 0 to 10000.
 	     */
-	    hbd_interest_rate: number;
+	    sbd_interest_rate: number;
 	}
 	export interface VestingDelegation {
 	    /**
@@ -433,25 +433,25 @@ declare module 'dsteem/chain/misc' {
 	     * Total asset held in confidential balances.
 	     */
 	    confidential_supply: Asset | string;
-	    current_hbd_supply: Asset | string;
+	    current_sbd_supply: Asset | string;
 	    /**
 	     * Total asset held in confidential balances.
 	     */
-	    confidential_hbd_supply: Asset | string;
-	    total_vesting_fund_hive: Asset | string;
+	    confidential_sbd_supply: Asset | string;
+	    total_vesting_fund_steem: Asset | string;
 	    total_vesting_shares: Asset | string;
-	    total_reward_fund_hive: Asset | string;
+	    total_reward_fund_steem: Asset | string;
 	    /**
 	     * The running total of REWARD^2.
 	     */
 	    total_reward_shares2: string;
 	    pending_rewarded_vesting_shares: Asset | string;
-	    pending_rewarded_vesting_hive: Asset | string;
+	    pending_rewarded_vesting_steem: Asset | string;
 	    /**
-	     * This property defines the interest rate that HBD deposits receive.
+	     * This property defines the interest rate that SBD deposits receive.
 	     */
-	    hbd_interest_rate: number;
-	    hbd_print_rate: number;
+	    sbd_interest_rate: number;
+	    sbd_print_rate: number;
 	    /**
 	     *  Average block size is updated every block to be:
 	     *
@@ -518,7 +518,7 @@ declare module 'dsteem/chain/misc' {
 }
 declare module 'dsteem/chain/serializer' {
 	/**
-	 * @file Hive protocol serialization.
+	 * @file Steem protocol serialization.
 	 * @author Johan Nordberg <code@johan-nordberg.com>
 	 * @license
 	 * Copyright (c) 2017 Johan Nordberg. All Rights Reserved.
@@ -552,7 +552,7 @@ declare module 'dsteem/chain/serializer' {
 	 * in the design, construction, operation or maintenance of any military facility.
 	 */
 	/// <reference types="node" />
-	import * as ByteBuffer from 'bytebuffer';
+	import * as ByteBuffer from "bytebuffer";
 	import { PublicKey } from 'dsteem/crypto';
 	import { Asset } from 'dsteem/chain/asset';
 	import { HexBuffer } from 'dsteem/chain/misc';
@@ -596,7 +596,7 @@ declare module 'dsteem/chain/serializer' {
 }
 declare module 'dsteem/chain/transaction' {
 	/**
-	 * @file Hive transaction type definitions.
+	 * @file Steem transaction type definitions.
 	 * @author Johan Nordberg <code@johan-nordberg.com>
 	 * @license
 	 * Copyright (c) 2017 Johan Nordberg. All Rights Reserved.
@@ -650,7 +650,7 @@ declare module 'dsteem/chain/transaction' {
 }
 declare module 'dsteem/crypto' {
 	/**
-	 * @file Hive crypto helpers.
+	 * @file Steem crypto helpers.
 	 * @author Johan Nordberg <code@johan-nordberg.com>
 	 * @license
 	 * Copyright (c) 2017 Johan Nordberg. All Rights Reserved.
@@ -723,7 +723,7 @@ declare module 'dsteem/crypto' {
 	     */
 	    inspect(): string;
 	}
-	export type KeyRole = 'owner' | 'active' | 'posting' | 'memo';
+	export type KeyRole = "owner" | "active" | "posting" | "memo";
 	/**
 	 * ECDSA (secp256k1) private key.
 	 */
@@ -801,7 +801,7 @@ declare module 'dsteem/crypto' {
 }
 declare module 'dsteem/chain/block' {
 	/**
-	 * @file Hive block type definitions.
+	 * @file Steem block type definitions.
 	 * @author Johan Nordberg <code@johan-nordberg.com>
 	 * @license
 	 * Copyright (c) 2017 Johan Nordberg. All Rights Reserved.
@@ -864,7 +864,7 @@ declare module 'dsteem/chain/block' {
 }
 declare module 'dsteem/chain/comment' {
 	/**
-	 * @file Hive type definitions related to comments and posting.
+	 * @file Steem type definitions related to comments and posting.
 	 * @author Johan Nordberg <code@johan-nordberg.com>
 	 * @license
 	 * Copyright (c) 2017 Johan Nordberg. All Rights Reserved.
@@ -928,7 +928,7 @@ declare module 'dsteem/chain/comment' {
 	    net_votes: number;
 	    root_comment: number;
 	    max_accepted_payout: string;
-	    percent_hbd: number;
+	    percent_steem_dollars: number;
 	    allow_replies: boolean;
 	    allow_votes: boolean;
 	    allow_curation_rewards: boolean;
@@ -959,7 +959,7 @@ declare module 'dsteem/chain/comment' {
 }
 declare module 'dsteem/chain/operation' {
 	/**
-	 * @file Hive operation type definitions.
+	 * @file Steem operation type definitions.
 	 * @author Johan Nordberg <code@johan-nordberg.com>
 	 * @license
 	 * Copyright (c) 2017 Johan Nordberg. All Rights Reserved.
@@ -1001,13 +1001,12 @@ declare module 'dsteem/chain/operation' {
 	import { ChainProperties, HexBuffer } from 'dsteem/chain/misc';
 	/**
 	 * Operation name.
-	 * Ref: https://gitlab.syncad.com/hive/hive/-/blob/master/libraries/protocol/include/hive/protocol/operations.hpp
 	 */
-	export type OperationName = 'vote' | 'comment' | 'transfer' | 'transfer_to_vesting' | 'withdraw_vesting' | 'limit_order_create' | 'limit_order_cancel' | 'feed_publish' | 'convert' | 'account_create' | 'account_update' | 'witness_update' | 'account_witness_vote' | 'account_witness_proxy' | 'pow' | 'custom' | 'report_over_production' | 'delete_comment' | 'custom_json' | 'comment_options' | 'set_withdraw_vesting_route' | 'limit_order_create2' | 'claim_account' | 'create_claimed_account' | 'request_account_recovery' | 'recover_account' | 'change_recovery_account' | 'escrow_transfer' | 'escrow_dispute' | 'escrow_release' | 'pow2' | 'escrow_approve' | 'transfer_to_savings' | 'transfer_from_savings' | 'cancel_transfer_from_savings' | 'custom_binary' | 'decline_voting_rights' | 'reset_account' | 'set_reset_account' | 'claim_reward_balance' | 'delegate_vesting_shares' | 'account_create_with_delegation' | 'witness_set_properties' | 'account_update2' | 'create_proposal' | 'update_proposal_votes' | 'remove_proposal' | 'update_proposal' | 'collateralized_convert' | 'recurrent_transfer';
+	export type OperationName = "vote" | "comment" | "transfer" | "transfer_to_vesting" | "withdraw_vesting" | "limit_order_create" | "limit_order_cancel" | "feed_publish" | "convert" | "account_create" | "account_update" | "witness_update" | "account_witness_vote" | "account_witness_proxy" | "pow" | "custom" | "report_over_production" | "delete_comment" | "custom_json" | "comment_options" | "set_withdraw_vesting_route" | "limit_order_create2" | "claim_account" | "create_claimed_account" | "request_account_recovery" | "recover_account" | "change_recovery_account" | "escrow_transfer" | "escrow_dispute" | "escrow_release" | "pow2" | "escrow_approve" | "transfer_to_savings" | "transfer_from_savings" | "cancel_transfer_from_savings" | "custom_binary" | "decline_voting_rights" | "reset_account" | "set_reset_account" | "claim_reward_balance" | "delegate_vesting_shares" | "account_create_with_delegation" | "witness_set_properties" | "account_update2" | "create_proposal" | "update_proposal_votes" | "remove_proposal" | "update_proposal" | "collateralized_convert" | "recurrent_transfer";
 	/**
 	 * Virtual operation name.
 	 */
-	export type VirtualOperationName = 'fill_convert_request' | 'author_reward' | 'curation_reward' | 'comment_reward' | 'liquidity_reward' | 'interest' | 'fill_vesting_withdraw' | 'fill_order' | 'shutdown_witness' | 'fill_transfer_from_savings' | 'hardfork' | 'comment_payout_update' | 'return_vesting_delegation' | 'comment_benefactor_reward' | 'producer_reward' | 'clear_null_account_balance' | 'proposal_pay' | 'sps_fund' | 'hardfork_hive' | 'hardfork_hive_restore' | 'delayed_voting' | 'consolidate_treasury_balance' | 'effective_comment_vote' | 'ineffective_delete_comment' | 'sps_convert' | 'expired_account_notification' | 'changed_recovery_account' | 'transfer_to_vesting_completed' | 'pow_reward' | 'vesting_shares_split' | 'account_created' | 'fill_collateralized_convert_request' | 'system_warning' | 'fill_recurrent_transfer' | 'failed_recurrent_transfer';
+	export type VirtualOperationName = "fill_convert_request" | "author_reward" | "curation_reward" | "comment_reward" | "liquidity_reward" | "interest" | "fill_vesting_withdraw" | "fill_order" | "shutdown_witness" | "fill_transfer_from_savings" | "hardfork" | "comment_payout_update" | "return_vesting_delegation" | "comment_benefactor_reward" | "producer_reward" | "clear_null_account_balance" | "proposal_pay" | "sps_fund" | "hardfork_steem" | "hardfork_steem_restore" | "delayed_voting" | "consolidate_treasury_balance" | "effective_comment_vote" | "ineffective_delete_comment" | "sps_convert" | "expired_account_notification" | "changed_recovery_account" | "transfer_to_vesting_completed" | "pow_reward" | "vesting_shares_split" | "account_created" | "fill_collateralized_convert_request" | "system_warning" | "fill_recurrent_transfer" | "failed_recurrent_transfer";
 	/**
 	 * Generic operation.
 	 */
@@ -1027,7 +1026,7 @@ declare module 'dsteem/chain/operation' {
 	    op: Operation;
 	}
 	export interface AccountCreateOperation extends Operation {
-	    0: 'account_create';
+	    0: "account_create";
 	    1: {
 	        fee: string | Asset;
 	        creator: string;
@@ -1040,7 +1039,7 @@ declare module 'dsteem/chain/operation' {
 	    };
 	}
 	export interface AccountCreateWithDelegationOperation extends Operation {
-	    0: 'account_create_with_delegation';
+	    0: "account_create_with_delegation";
 	    1: {
 	        fee: string | Asset;
 	        delegation: string | Asset;
@@ -1058,7 +1057,7 @@ declare module 'dsteem/chain/operation' {
 	    };
 	}
 	export interface AccountUpdateOperation extends Operation {
-	    0: 'account_update';
+	    0: "account_update";
 	    1: {
 	        account: string;
 	        owner?: AuthorityType;
@@ -1069,14 +1068,14 @@ declare module 'dsteem/chain/operation' {
 	    };
 	}
 	export interface AccountWitnessProxyOperation extends Operation {
-	    0: 'account_witness_proxy';
+	    0: "account_witness_proxy";
 	    1: {
 	        account: string;
 	        proxy: string;
 	    };
 	}
 	export interface AccountWitnessVoteOperation extends Operation {
-	    0: 'account_witness_vote';
+	    0: "account_witness_vote";
 	    1: {
 	        account: string;
 	        witness: string;
@@ -1084,7 +1083,7 @@ declare module 'dsteem/chain/operation' {
 	    };
 	}
 	export interface CancelTransferFromSavingsOperation extends Operation {
-	    0: 'cancel_transfer_from_savings';
+	    0: "cancel_transfer_from_savings";
 	    1: {
 	        from: string;
 	        request_id: number;
@@ -1109,7 +1108,7 @@ declare module 'dsteem/chain/operation' {
 	 * witness according to stake.
 	 */
 	export interface ChangeRecoveryAccountOperation extends Operation {
-	    0: 'change_recovery_account';
+	    0: "change_recovery_account";
 	    1: {
 	        /**
 	         * The account that would be recovered in case of compromise.
@@ -1126,16 +1125,16 @@ declare module 'dsteem/chain/operation' {
 	    };
 	}
 	export interface ClaimRewardBalanceOperation extends Operation {
-	    0: 'claim_reward_balance';
+	    0: "claim_reward_balance";
 	    1: {
 	        account: string;
-	        reward_hive: string | Asset;
+	        reward_steem: string | Asset;
 	        reward_hbd: string | Asset;
 	        reward_vests: string | Asset;
 	    };
 	}
 	export interface ClaimAccountOperation extends Operation {
-	    0: 'claim_account';
+	    0: "claim_account";
 	    1: {
 	        creator: string;
 	        fee: string | Asset;
@@ -1146,7 +1145,7 @@ declare module 'dsteem/chain/operation' {
 	    };
 	}
 	export interface CommentOperation extends Operation {
-	    0: 'comment';
+	    0: "comment";
 	    1: {
 	        parent_author: string;
 	        parent_permlink: string;
@@ -1158,14 +1157,14 @@ declare module 'dsteem/chain/operation' {
 	    };
 	}
 	export interface CommentOptionsOperation extends Operation {
-	    0: 'comment_options';
+	    0: "comment_options";
 	    1: {
 	        author: string;
 	        permlink: string;
-	        /** HBD value of the maximum payout this post will receive. */
+	        /** SBD value of the maximum payout this post will receive. */
 	        max_accepted_payout: Asset | string;
-	        /** The percent of Hive Dollars to key, unkept amounts will be received as Hive Power. */
-	        percent_hbd: number;
+	        /** The percent of Steem Dollars to key, unkept amounts will be received as Steem Power. */
+	        percent_steem_dollars: number;
 	        /** Whether to allow post to receive votes. */
 	        allow_votes: boolean;
 	        /** Whether to allow post to recieve curation rewards. */
@@ -1176,7 +1175,7 @@ declare module 'dsteem/chain/operation' {
 	    };
 	}
 	export interface ConvertOperation extends Operation {
-	    0: 'convert';
+	    0: "convert";
 	    1: {
 	        owner: string;
 	        requestid: number;
@@ -1184,7 +1183,7 @@ declare module 'dsteem/chain/operation' {
 	    };
 	}
 	export interface CreateClaimedAccountOperation extends Operation {
-	    0: 'create_claimed_account';
+	    0: "create_claimed_account";
 	    1: {
 	        creator: string;
 	        new_account_name: string;
@@ -1200,7 +1199,7 @@ declare module 'dsteem/chain/operation' {
 	    };
 	}
 	export interface CustomOperation extends Operation {
-	    0: 'custom';
+	    0: "custom";
 	    1: {
 	        required_auths: string[];
 	        id: number;
@@ -1208,7 +1207,7 @@ declare module 'dsteem/chain/operation' {
 	    };
 	}
 	export interface CustomBinaryOperation extends Operation {
-	    0: 'custom_binary';
+	    0: "custom_binary";
 	    1: {
 	        required_owner_auths: string[];
 	        required_active_auths: string[];
@@ -1222,7 +1221,7 @@ declare module 'dsteem/chain/operation' {
 	    };
 	}
 	export interface CustomJsonOperation extends Operation {
-	    0: 'custom_json';
+	    0: "custom_json";
 	    1: {
 	        required_auths: string[];
 	        required_posting_auths: string[];
@@ -1237,14 +1236,14 @@ declare module 'dsteem/chain/operation' {
 	    };
 	}
 	export interface DeclineVotingRightsOperation extends Operation {
-	    0: 'decline_voting_rights';
+	    0: "decline_voting_rights";
 	    1: {
 	        account: string;
 	        decline: boolean;
 	    };
 	}
 	export interface DelegateVestingSharesOperation extends Operation {
-	    0: 'delegate_vesting_shares';
+	    0: "delegate_vesting_shares";
 	    1: {
 	        /**
 	         * The account delegating vesting shares.
@@ -1261,7 +1260,7 @@ declare module 'dsteem/chain/operation' {
 	    };
 	}
 	export interface DeleteCommentOperation extends Operation {
-	    0: 'delete_comment';
+	    0: "delete_comment";
 	    1: {
 	        author: string;
 	        permlink: string;
@@ -1273,7 +1272,7 @@ declare module 'dsteem/chain/operation' {
 	 * Subsequent escrow approve operations, regardless of the approval, will be rejected.
 	 */
 	export interface EscrowApproveOperation extends Operation {
-	    0: 'escrow_approve';
+	    0: "escrow_approve";
 	    1: {
 	        from: string;
 	        to: string;
@@ -1292,7 +1291,7 @@ declare module 'dsteem/chain/operation' {
 	 * who gets what.
 	 */
 	export interface EscrowDisputeOperation extends Operation {
-	    0: 'escrow_dispute';
+	    0: "escrow_dispute";
 	    1: {
 	        from: string;
 	        to: string;
@@ -1312,7 +1311,7 @@ declare module 'dsteem/chain/operation' {
 	 *    following whichever agreement was in place between the parties.
 	 */
 	export interface EscrowReleaseOperation extends Operation {
-	    0: 'escrow_release';
+	    0: "escrow_release";
 	    1: {
 	        from: string;
 	        /**
@@ -1332,11 +1331,11 @@ declare module 'dsteem/chain/operation' {
 	        /**
 	         * The amount of hbd to release.
 	         */
-	        hbd_amount: Asset | string;
+	        sbd_amount: Asset | string;
 	        /**
-	         * The amount of hive to release.
+	         * The amount of steem to release.
 	         */
-	        hive_amount: Asset | string;
+	        steem_amount: Asset | string;
 	    };
 	}
 	/**
@@ -1358,14 +1357,14 @@ declare module 'dsteem/chain/operation' {
 	 * by the sender.
 	 */
 	export interface EscrowTransferOperation extends Operation {
-	    0: 'escrow_transfer';
+	    0: "escrow_transfer";
 	    1: {
 	        from: string;
 	        to: string;
 	        agent: string;
 	        escrow_id: number;
-	        hbd_amount: Asset | string;
-	        hive_amount: Asset | string;
+	        sbd_amount: Asset | string;
+	        steem_amount: Asset | string;
 	        fee: Asset | string;
 	        ratification_deadline: string;
 	        escrow_expiration: string;
@@ -1373,7 +1372,7 @@ declare module 'dsteem/chain/operation' {
 	    };
 	}
 	export interface FeedPublishOperation extends Operation {
-	    0: 'feed_publish';
+	    0: "feed_publish";
 	    1: {
 	        publisher: string;
 	        exchange_rate: PriceType;
@@ -1383,7 +1382,7 @@ declare module 'dsteem/chain/operation' {
 	 * Cancels an order and returns the balance to owner.
 	 */
 	export interface LimitOrderCancelOperation extends Operation {
-	    0: 'limit_order_cancel';
+	    0: "limit_order_cancel";
 	    1: {
 	        owner: string;
 	        orderid: number;
@@ -1393,7 +1392,7 @@ declare module 'dsteem/chain/operation' {
 	 * This operation creates a limit order and matches it against existing open orders.
 	 */
 	export interface LimitOrderCreateOperation extends Operation {
-	    0: 'limit_order_create';
+	    0: "limit_order_create";
 	    1: {
 	        owner: string;
 	        orderid: number;
@@ -1408,7 +1407,7 @@ declare module 'dsteem/chain/operation' {
 	 * than calculating it from other fields.
 	 */
 	export interface LimitOrderCreate2Operation extends Operation {
-	    0: 'limit_order_create2';
+	    0: "limit_order_create2";
 	    1: {
 	        owner: string;
 	        orderid: number;
@@ -1422,7 +1421,7 @@ declare module 'dsteem/chain/operation' {
 	 * Legacy proof of work operation.
 	 */
 	export interface PowOperation extends Operation {
-	    0: 'pow';
+	    0: "pow";
 	    1: {
 	        worker_account: string;
 	        block_id: any;
@@ -1435,7 +1434,7 @@ declare module 'dsteem/chain/operation' {
 	 * Legacy equihash proof of work operation.
 	 */
 	export interface Pow2Operation extends Operation {
-	    0: 'pow2';
+	    0: "pow2";
 	    1: {
 	        work: any;
 	        new_owner_key?: string | PublicKey;
@@ -1480,7 +1479,7 @@ declare module 'dsteem/chain/operation' {
 	 * concern.
 	 */
 	export interface RecoverAccountOperation extends Operation {
-	    0: 'recover_account';
+	    0: "recover_account";
 	    1: {
 	        /**
 	         * The account to be recovered.
@@ -1509,13 +1508,13 @@ declare module 'dsteem/chain/operation' {
 	 *
 	 * Users not in the ACTIVE witness set should not have to worry about their
 	 * key getting compromised and being used to produced multiple blocks so
-	 * the attacker can report it and steel their vesting hive.
+	 * the attacker can report it and steel their vesting steem.
 	 *
-	 * The result of the operation is to transfer the full VESTING HIVE balance
+	 * The result of the operation is to transfer the full VESTING STEEM balance
 	 * of the block producer to the reporter.
 	 */
 	export interface ReportOverProductionOperation extends Operation {
-	    0: 'report_over_production';
+	    0: "report_over_production";
 	    1: {
 	        reporter: string;
 	        first_block: SignedBlockHeader;
@@ -1550,7 +1549,7 @@ declare module 'dsteem/chain/operation' {
 	 * the recover account operation.
 	 */
 	export interface RequestAccountRecoveryOperation extends Operation {
-	    0: 'request_account_recovery';
+	    0: "request_account_recovery";
 	    1: {
 	        /**
 	         * The recovery account is listed as the recovery account on the account to recover.
@@ -1576,7 +1575,7 @@ declare module 'dsteem/chain/operation' {
 	 * new_owner_authority after 60 days of inactivity.
 	 */
 	export interface ResetAccountOperation extends Operation {
-	    0: 'reset_account';
+	    0: "reset_account";
 	    1: {
 	        reset_account: string;
 	        account_to_reset: string;
@@ -1588,7 +1587,7 @@ declare module 'dsteem/chain/operation' {
 	 * to execute the 'reset_account_operation' after 60 days.
 	 */
 	export interface SetResetAccountOperation extends Operation {
-	    0: 'set_reset_account';
+	    0: "set_reset_account";
 	    1: {
 	        account: string;
 	        current_reset_account: string;
@@ -1600,10 +1599,10 @@ declare module 'dsteem/chain/operation' {
 	 * request for the funds to be transferred directly to another account's
 	 * balance rather than the withdrawing account. In addition, those funds
 	 * can be immediately vested again, circumventing the conversion from
-	 * vests to hive and back, guaranteeing they maintain their value.
+	 * vests to steem and back, guaranteeing they maintain their value.
 	 */
 	export interface SetWithdrawVestingRouteOperation extends Operation {
-	    0: 'set_withdraw_vesting_route';
+	    0: "set_withdraw_vesting_route";
 	    1: {
 	        from_account: string;
 	        to_account: string;
@@ -1615,7 +1614,7 @@ declare module 'dsteem/chain/operation' {
 	 * Transfers asset from one account to another.
 	 */
 	export interface TransferOperation extends Operation {
-	    0: 'transfer';
+	    0: "transfer";
 	    1: {
 	        /**
 	         * Sending account name.
@@ -1626,7 +1625,7 @@ declare module 'dsteem/chain/operation' {
 	         */
 	        to: string;
 	        /**
-	         * Amount of HIVE or HBD to send.
+	         * Amount of STEEM or SBD to send.
 	         */
 	        amount: string | Asset;
 	        /**
@@ -1636,7 +1635,7 @@ declare module 'dsteem/chain/operation' {
 	    };
 	}
 	export interface TransferFromSavingsOperation extends Operation {
-	    0: 'transfer_from_savings';
+	    0: "transfer_from_savings";
 	    1: {
 	        from: string;
 	        request_id: number;
@@ -1646,7 +1645,7 @@ declare module 'dsteem/chain/operation' {
 	    };
 	}
 	export interface TransferToSavingsOperation extends Operation {
-	    0: 'transfer_to_savings';
+	    0: "transfer_to_savings";
 	    1: {
 	        amount: string | Asset;
 	        from: string;
@@ -1656,25 +1655,25 @@ declare module 'dsteem/chain/operation' {
 	    };
 	}
 	/**
-	 * This operation converts HIVE into VFS (Vesting Fund Shares) at
+	 * This operation converts STEEM into VFS (Vesting Fund Shares) at
 	 * the current exchange rate. With this operation it is possible to
 	 * give another account vesting shares so that faucets can
 	 * pre-fund new accounts with vesting shares.
 	 * (A.k.a. Powering Up)
 	 */
 	export interface TransferToVestingOperation extends Operation {
-	    0: 'transfer_to_vesting';
+	    0: "transfer_to_vesting";
 	    1: {
 	        from: string;
 	        to: string;
 	        /**
-	         * Amount to power up, must be HIVE
+	         * Amount to power up, must be STEEM
 	         */
 	        amount: string | Asset;
 	    };
 	}
 	export interface VoteOperation extends Operation {
-	    0: 'vote';
+	    0: "vote";
 	    1: {
 	        voter: string;
 	        author: string;
@@ -1698,7 +1697,7 @@ declare module 'dsteem/chain/operation' {
 	 * (A.k.a. Powering Down)
 	 */
 	export interface WithdrawVestingOperation extends Operation {
-	    0: 'withdraw_vesting';
+	    0: "withdraw_vesting";
 	    1: {
 	        account: string;
 	        /**
@@ -1722,7 +1721,7 @@ declare module 'dsteem/chain/operation' {
 	 * producing blocks.
 	 */
 	export interface WitnessUpdateOperation extends Operation {
-	    0: 'witness_update';
+	    0: "witness_update";
 	    1: {
 	        owner: string;
 	        /**
@@ -1738,7 +1737,7 @@ declare module 'dsteem/chain/operation' {
 	    };
 	}
 	export interface WitnessSetPropertiesOperation extends Operation {
-	    0: 'witness_set_properties';
+	    0: "witness_set_properties";
 	    1: {
 	        owner: string;
 	        props: [string, string][];
@@ -1746,7 +1745,7 @@ declare module 'dsteem/chain/operation' {
 	    };
 	}
 	export interface AccountUpdate2Operation extends Operation {
-	    0: 'account_update2';
+	    0: "account_update2";
 	    1: {
 	        account: string;
 	        owner?: AuthorityType;
@@ -1759,7 +1758,7 @@ declare module 'dsteem/chain/operation' {
 	    };
 	}
 	export interface CreateProposalOperation extends Operation {
-	    0: 'create_proposal';
+	    0: "create_proposal";
 	    1: {
 	        creator: string;
 	        receiver: string;
@@ -1772,7 +1771,7 @@ declare module 'dsteem/chain/operation' {
 	    };
 	}
 	export interface UpdateProposalVotesOperation extends Operation {
-	    0: 'update_proposal_votes';
+	    0: "update_proposal_votes";
 	    1: {
 	        voter: string;
 	        proposal_ids: number[];
@@ -1781,7 +1780,7 @@ declare module 'dsteem/chain/operation' {
 	    };
 	}
 	export interface RemoveProposalOperation extends Operation {
-	    0: 'remove_proposal';
+	    0: "remove_proposal";
 	    1: {
 	        proposal_owner: string;
 	        proposal_ids: number[];
@@ -1789,7 +1788,7 @@ declare module 'dsteem/chain/operation' {
 	    };
 	}
 	export interface UpdateProposalOperation extends Operation {
-	    0: 'update_proposal';
+	    0: "update_proposal";
 	    1: {
 	        proposal_id: number;
 	        creator: string;
@@ -1800,7 +1799,7 @@ declare module 'dsteem/chain/operation' {
 	    };
 	}
 	export interface CollateralizedConvertOperation extends Operation {
-	    0: 'collateralized_convert';
+	    0: "collateralized_convert";
 	    1: {
 	        owner: string;
 	        requestid: number;
@@ -1808,7 +1807,7 @@ declare module 'dsteem/chain/operation' {
 	    };
 	}
 	export interface RecurrentTransferOperation extends Operation {
-	    0: 'recurrent_transfer';
+	    0: "recurrent_transfer";
 	    1: {
 	        from: string;
 	        to: string;
@@ -1857,7 +1856,7 @@ declare module 'dsteem/utils' {
 	 * in the design, construction, operation or maintenance of any military facility.
 	 */
 	/// <reference types="node" />
-	import { EventEmitter } from 'events';
+	import { EventEmitter } from "events";
 	/**
 	 * Return a promise that will resove when a specific event is emitted.
 	 */
@@ -1891,8 +1890,8 @@ declare module 'dsteem/utils' {
 	    key: PublicKey | string;
 	    maximum_block_size?: number;
 	    new_signing_key?: PublicKey | string | null;
-	    hbd_exchange_rate?: PriceType;
-	    hbd_interest_rate?: number;
+	    sbd_exchange_rate?: PriceType;
+	    sbd_interest_rate?: number;
 	    url?: string;
 	}
 	export function buildWitnessUpdateOp(owner: string, props: WitnessProps): WitnessSetPropertiesOperation;
@@ -1965,8 +1964,8 @@ declare module 'dsteem/utils' {
 	    clear_null_account_balance: number;
 	    proposal_pay: number;
 	    sps_fund: number;
-	    hardfork_hive: number;
-	    hardfork_hive_restore: number;
+	    hardfork_steem: number;
+	    hardfork_steem_restore: number;
 	    delayed_voting: number;
 	    consolidate_treasury_balance: number;
 	    effective_comment_vote: number;
@@ -1992,7 +1991,7 @@ declare module 'dsteem/utils' {
 }
 declare module 'dsteem/helpers/blockchain' {
 	/**
-	 * @file Hive blockchain helpers.
+	 * @file Steem blockchain helpers.
 	 * @author Johan Nordberg <code@johan-nordberg.com>
 	 * @license
 	 * Copyright (c) 2017 Johan Nordberg. All Rights Reserved.
@@ -2310,7 +2309,7 @@ declare module 'dsteem/helpers/database' {
 	/**
 	 * Possible categories for `get_discussions_by_*`.
 	 */
-	export type DiscussionQueryCategory = 'active' | 'blog' | 'cashout' | 'children' | 'comments' | 'feed' | 'hot' | 'promoted' | 'trending' | 'votes' | 'created';
+	export type DiscussionQueryCategory = "active" | "blog" | "cashout" | "children" | "comments" | "feed" | "hot" | "promoted" | "trending" | "votes" | "created";
 	export interface DisqussionQuery {
 	    /**
 	     * Name of author or tag to fetch.
@@ -2362,7 +2361,7 @@ declare module 'dsteem/helpers/database' {
 	     */
 	    getState(path: string): Promise<any>;
 	    /**
-	     * Return median price in HBD for 1 HIVE as reported by the witnesses.
+	     * Return median price in SBD for 1 STEEM as reported by the witnesses.
 	     */
 	    getCurrentMedianHistoryPrice(): Promise<Price>;
 	    /**
@@ -2753,11 +2752,11 @@ declare module 'dsteem/client' {
 	 */
 	export const VERSION: string;
 	/**
-	 * Main Hive network chain id.
+	 * Main Steem network chain id.
 	 */
 	export const DEFAULT_CHAIN_ID: Buffer;
 	/**
-	 * Main Hive network address prefix.
+	 * Main Steem network address prefix.
 	 */
 	export const DEFAULT_ADDRESS_PREFIX = "STM";
 	/**
@@ -2766,14 +2765,14 @@ declare module 'dsteem/client' {
 	 */
 	export interface ClientOptions {
 	    /**
-	     * Hive chain id. Defaults to main hive network:
+	     * Steem chain id. Defaults to main steem network:
 	     * need the new id?
 	     * `beeab0de00000000000000000000000000000000000000000000000000000000`
 	     *
 	     */
 	    chainId?: string;
 	    /**
-	     * Hive address prefix. Defaults to main network:
+	     * Steem address prefix. Defaults to main network:
 	     * `STM`
 	     */
 	    addressPrefix?: string;
@@ -2822,7 +2821,7 @@ declare module 'dsteem/client' {
 	     */
 	    readonly options: ClientOptions;
 	    /**
-	     * Address to Hive RPC server.
+	     * Address to Steem RPC server.
 	     * String or String[] *read-only*
 	     */
 	    address: string | string[];
@@ -2868,8 +2867,8 @@ declare module 'dsteem/client' {
 	    private consoleOnFailover;
 	    currentAddress: string;
 	    /**
-	     * @param address The address to the Hive RPC server,
-	     * e.g. `https://api.hive.blog`. or [`https://api.hive.blog`, `https://another.api.com`]
+	     * @param address The address to the Steem RPC server,
+	     * e.g. `https://api.upvu.org`. or [`https://api.steemit.com`, `https://another.api.com`]
 	     * @param options Client options.
 	     */
 	    constructor(address: string | string[], options?: ClientOptions);

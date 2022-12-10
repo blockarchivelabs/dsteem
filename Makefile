@@ -71,7 +71,6 @@ node_modules:
 docs: $(SRC_FILES) node_modules
 	typedoc --gitRevision master --target ES6 --mode file --out docs src
 	find docs -name "*.html" | xargs perl -i -pe's~$(shell pwd)~.~g'
-	echo "Served at <https://openhive-network.github.io/dsteem>" > docs/README.md
 	touch docs
 
 .PHONY: clean
