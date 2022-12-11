@@ -52,7 +52,7 @@
         function (_dereq_, module, exports) {
           "use strict";
           Object.defineProperty(exports, "__esModule", { value: !0 }),
-            (exports.default = "1.1.2");
+            (exports.default = "1.1.3");
         },
         {},
       ],
@@ -38912,7 +38912,7 @@
                   OperationDataSerializer(39, [
                     ["account", StringSerializer],
                     ["reward_steem", AssetSerializer],
-                    ["reward_hbd", AssetSerializer],
+                    ["reward_sbd", AssetSerializer],
                     ["reward_vests", AssetSerializer],
                   ])),
                 (OperationSerializers.comment = OperationDataSerializer(1, [
