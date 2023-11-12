@@ -1,6 +1,6 @@
 {
   "name": "@upvu/dsteem",
-  "version": "1.1.6",
+  "version": "1.1.7",
   "description": "Steem blockchain RPC client library for UPVU Web",
   "author": "source:Johan Nordberg modify:upvu",
   "license": "BSD-3-Clause",
