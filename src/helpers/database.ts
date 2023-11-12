@@ -62,7 +62,7 @@ export type DiscussionQueryCategory =
   | "votes"
   | "created";
 
-export interface DisqussionQuery {
+export interface DiscussionQuery {
   /**
    * Name of author or tag to fetch.
    */
@@ -187,7 +187,7 @@ export class DatabaseAPI {
    */
   public getDiscussions(
     by: DiscussionQueryCategory,
-    query: DisqussionQuery
+    query: DiscussionQuery
   ): Promise<Discussion[]> {
     return this.call(`get_discussions_by_${by}`, [query]);
   }
